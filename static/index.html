@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ResumeRank AI</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --border: #2a2e37;
+    --text: #e8e9ec;
+    --muted: #9099a8;
+    --accent: #5b8cff;
+    --accent-dim: #2e3d66;
+    --good: #3ecf8e;
+    --good-dim: #163626;
+    --warn: #e0b23e;
+    --bad: #e05a5a;
+    --bad-dim: #3a1f1f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+  h1 { font-size: 1.6rem; margin-bottom: 4px; }
+  .subtitle { color: var(--muted); margin-top: 0; margin-bottom: 28px; font-size: 0.95rem; }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; }
+  textarea {
+    width: 100%; min-height: 110px; resize: vertical;
+    background: #0d0f13; color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px; font-family: inherit; font-size: 0.92rem;
+  }
+  textarea:focus { outline: none; border-color: var(--accent); }
+
+  #dropZone {
+    margin-top: 16px;
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 28px;
+    text-align: center;
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  #dropZone.dragover { border-color: var(--accent); background: var(--accent-dim); color: var(--text); }
+  #dropZone strong { color: var(--accent); }
+
+  #fileChips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .chip {
+    background: #0d0f13; border: 1px solid var(--border);
+    border-radius: 20px; padding: 6px 10px 6px 14px;
+    display: flex; align-items: center; gap: 8px; font-size: 0.85rem;
+  }
+  .chip button {
+    background: none; border: none; color: var(--muted);
+    cursor: pointer; font-size: 1rem; line-height: 1; padding: 0 4px;
+  }
+  .chip button:hover { color: var(--bad); }
+
+  button#submitButton {
+    margin-top: 18px; padding: 11px 24px; font-size: 0.95rem; font-weight: 600;
+    background: var(--accent); color: white; border: none; border-radius: 8px;
+    cursor: pointer; transition: opacity 0.15s;
+  }
+  button#submitButton:hover { opacity: 0.9; }
+  button#submitButton:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  #status { margin-top: 14px; font-size: 0.9rem; color: var(--muted); display: none; }
+  .spinner {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+    margin-right: 8px; vertical-align: -2px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #resultsSection { display: none; }
+  .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .results-header h2 { font-size: 1.1rem; margin: 0; }
+  #exportButton {
+    background: none; border: 1px solid var(--border); color: var(--text);
+    padding: 7px 14px; border-radius: 7px; font-size: 0.85rem; cursor: pointer;
+  }
+  #exportButton:hover { border-color: var(--accent); }
+
+  .card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px; margin-bottom: 10px;
+  }
+  .card.top-match { border-color: var(--good); box-shadow: 0 0 0 1px var(--good); }
+  .card.error { border-color: var(--bad); }
+
+  .card-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+  .card-rank { color: var(--muted); font-size: 0.85rem; margin-right: 8px; }
+  .card-name { font-weight: 600; }
+  .card-score { font-size: 1.15rem; font-weight: 700; color: var(--accent); }
+  .badge {
+    display: inline-block; background: var(--good); color: #052e1c;
+    font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+    margin-left: 10px; text-transform: uppercase; letter-spacing: 0.03em;
+  }
+
+  /* Primary, human-facing content: skill tags */
+  .skills-block { margin-bottom: 4px; }
+  .skills-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .tag {
+    font-size: 0.78rem; padding: 3px 10px; border-radius: 12px;
+    border: 1px solid transparent;
+  }
+  .tag.matched { background: var(--good-dim); color: var(--good); border-color: #1f5c40; }
+  .tag.missing { background: var(--bad-dim); color: #f09a9a; border-color: #5c2a2a; }
+  .no-skills { color: var(--muted); font-size: 0.8rem; font-style: italic; }
+
+  /* Secondary, technical content: hidden by default */
+  .details-toggle {
+    background: none; border: none; color: var(--accent);
+    font-size: 0.8rem; cursor: pointer; padding: 4px 0; margin-top: 4px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .details-toggle .arrow { transition: transform 0.15s; display: inline-block; }
+  .details-toggle.open .arrow { transform: rotate(90deg); }
+  .details-panel { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .details-panel.open { display: block; }
+
+  .score-rows { display: grid; gap: 6px; }
+  .score-row { display: grid; grid-template-columns: 90px 1fr 50px; align-items: center; gap: 10px; font-size: 0.82rem; }
+  .score-row .label { color: var(--muted); }
+  .bar-track { background: #0d0f13; border-radius: 4px; height: 8px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .bar-fill.skill { background: var(--accent); }
+  .bar-fill.tfidf { background: var(--warn); }
+  .bar-fill.embedding { background: var(--good); }
+  .score-row .value { text-align: right; color: var(--muted); }
+
+  .sort-bar { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .sort-bar button {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    padding: 5px 12px; border-radius: 16px; font-size: 0.78rem; cursor: pointer;
+  }
+  .sort-bar button.active { border-color: var(--accent); color: var(--accent); }
+
+  .error-text { color: var(--bad); font-size: 0.85rem; }
+  #emptyState { color: var(--muted); font-size: 0.9rem; text-align: center; padding: 20px; }
+</style>
+</head>
+<body>
+
+  <h1>ResumeRank AI</h1>
+  <p class="subtitle">Paste a job description, drop in resumes, and get a ranked, explainable match.</p>
+
+  <div class="panel">
+    <label for="jobDescription">Job Description</label>
+    <textarea id="jobDescription" placeholder="Paste the job description here..."></textarea>
+
+    <label style="margin-top:18px;">Resumes</label>
+    <div id="dropZone">
+      <div><strong>Click to browse</strong> or drag PDF/DOCX files here</div>
+    </div>
+    <input type="file" id="fileInput" multiple accept=".pdf,.docx" style="display:none;">
+    <div id="fileChips"></div>
+
+    <button id="submitButton">Rank Resumes</button>
+    <div id="status"></div>
+  </div>
+
+  <div id="resultsSection">
+    <div class="results-header">
+      <h2>Results</h2>
+      <button id="exportButton">Export CSV</button>
+    </div>
+    <div class="sort-bar">
+      <button data-sort="score" class="active">Overall</button>
+      <button data-sort="skill_score">Skills</button>
+      <button data-sort="tfidf_score">TF-IDF</button>
+      <button data-sort="embedding_score">Embedding</button>
+    </div>
+    <div id="cardsContainer"></div>
+  </div>
+
+<script>
+  const dropZone = document.getElementById("dropZone");
+  const fileInput = document.getElementById("fileInput");
+  const fileChips = document.getElementById("fileChips");
+  const submitButton = document.getElementById("submitButton");
+  const status = document.getElementById("status");
+  const resultsSection = document.getElementById("resultsSection");
+  const cardsContainer = document.getElementById("cardsContainer");
+  const sortBar = document.querySelector(".sort-bar");
+
+  let selectedFiles = [];
+  let lastResults = [];
+
+  dropZone.addEventListener("click", () => fileInput.click());
+  dropZone.addEventListener("dragover", (e) => { e.preventDefault(); dropZone.classList.add("dragover"); });
+  dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
+  dropZone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropZone.classList.remove("dragover");
+    addFiles(e.dataTransfer.files);
+  });
+  fileInput.addEventListener("change", () => addFiles(fileInput.files));
+
+  function addFiles(fileList) {
+    for (const file of fileList) {
+      const isDuplicate = selectedFiles.some(f => f.name === file.name && f.size === file.size);
+      if (!isDuplicate) selectedFiles.push(file);
+    }
+    renderChips();
+  }
+
+  function removeFile(index) {
+    selectedFiles.splice(index, 1);
+    renderChips();
+  }
+
+  function renderChips() {
+    fileChips.innerHTML = "";
+    selectedFiles.forEach((file, index) => {
+      const chip = document.createElement("div");
+      chip.className = "chip";
+      chip.innerHTML = `<span>${file.name}</span>`;
+      const removeBtn = document.createElement("button");
+      removeBtn.textContent = "×";
+      removeBtn.onclick = () => removeFile(index);
+      chip.appendChild(removeBtn);
+      fileChips.appendChild(chip);
+    });
+  }
+
+  submitButton.addEventListener("click", async () => {
+    const jobDescription = document.getElementById("jobDescription").value;
+
+    if (!jobDescription.trim()) { alert("Please enter a job description"); return; }
+    if (selectedFiles.length === 0) { alert("Please add at least one resume"); return; }
+
+    const formData = new FormData();
+    formData.append("job_description", jobDescription);
+    selectedFiles.forEach(file => formData.append("resumes", file));
+
+    submitButton.disabled = true;
+    status.style.display = "block";
+    status.innerHTML = `<span class="spinner"></span> Scoring ${selectedFiles.length} resume(s)...`;
+    resultsSection.style.display = "none";
+
+    try {
+      const response = await fetch("/rank", { method: "POST", body: formData });
+      const data = await response.json();
+
+      status.style.display = "none";
+      submitButton.disabled = false;
+
+      if (data.error) { alert(data.error); return; }
+
+      lastResults = data.results;
+      renderResults("score");
+      resultsSection.style.display = "block";
+    } catch (error) {
+      status.style.display = "none";
+      submitButton.disabled = false;
+      alert("Something went wrong: " + error.message);
+    }
+  });
+
+  sortBar.addEventListener("click", (e) => {
+    const key = e.target.dataset.sort;
+    if (!key) return;
+    document.querySelectorAll(".sort-bar button").forEach(b => b.classList.remove("active"));
+    e.target.classList.add("active");
+    renderResults(key);
+  });
+
+  function renderResults(sortKey) {
+    const scored = lastResults.filter(r => r.error === undefined);
+    const failed = lastResults.filter(r => r.error !== undefined);
+
+    scored.sort((a, b) => b[sortKey] - a[sortKey]);
+
+    cardsContainer.innerHTML = "";
+
+    if (scored.length === 0 && failed.length === 0) {
+      cardsContainer.innerHTML = `<div id="emptyState">No results to show.</div>`;
+      return;
+    }
+
+    scored.forEach((result, index) => {
+      const card = document.createElement("div");
+      card.className = "card" + (index === 0 ? " top-match" : "");
+
+      const matched = result.matched_skills || [];
+      const missing = result.missing_skills || [];
+
+      const matchedTags = matched.length
+        ? matched.map(s => `<span class="tag matched">${s}</span>`).join("")
+        : `<span class="no-skills">No listed skills matched</span>`;
+
+      const missingTags = missing.length
+        ? missing.map(s => `<span class="tag missing">${s}</span>`).join("")
+        : "";
+
+      card.innerHTML = `
+        <div class="card-top">
+          <div>
+            <span class="card-rank">#${index + 1}</span>
+            <span class="card-name">${result.filename}</span>
+            ${index === 0 ? '<span class="badge">Best match</span>' : ""}
+          </div>
+          <div class="card-score">${Math.round(result.score * 100)}%</div>
+        </div>
+
+        <div class="skills-block">
+          <div class="skills-label">Matched skills (${matched.length}${missing.length ? ` / ${matched.length + missing.length}` : ""})</div>
+          <div class="tag-row">${matchedTags}</div>
+          ${missing.length ? `
+            <div class="skills-label">Missing</div>
+            <div class="tag-row">${missingTags}</div>
+          ` : ""}
+        </div>
+
+        <button class="details-toggle">
+          <span class="arrow">▸</span> Show scoring details
+        </button>
+        <div class="details-panel">
+          <div class="score-rows">
+            ${scoreRow("Skills", "skill", result.skill_score)}
+            ${scoreRow("TF-IDF", "tfidf", result.tfidf_score)}
+            ${scoreRow("Embedding", "embedding", result.embedding_score)}
+          </div>
+        </div>
+      `;
+
+      const toggle = card.querySelector(".details-toggle");
+      const panel = card.querySelector(".details-panel");
+      toggle.addEventListener("click", () => {
+        const isOpen = panel.classList.toggle("open");
+        toggle.classList.toggle("open", isOpen);
+        toggle.innerHTML = isOpen
+          ? '<span class="arrow">▸</span> Hide scoring details'
+          : '<span class="arrow">▸</span> Show scoring details';
+      });
+
+      cardsContainer.appendChild(card);
+    });
+
+    failed.forEach(result => {
+      const card = document.createElement("div");
+      card.className = "card error";
+      card.innerHTML = `
+        <div class="card-top">
+          <span class="card-name">${result.filename}</span>
+        </div>
+        <div class="error-text">${result.error}</div>
+      `;
+      cardsContainer.appendChild(card);
+    });
+  }
+
+  function scoreRow(label, cssClass, value) {
+    const percent = Math.round(value * 100);
+    return `
+      <div class="score-row">
+        <span class="label">${label}</span>
+        <div class="bar-track"><div class="bar-fill ${cssClass}" style="width:${percent}%"></div></div>
+        <span class="value">${percent}%</span>
+      </div>
+    `;
+  }
+
+  document.getElementById("exportButton").addEventListener("click", () => {
+    if (lastResults.length === 0) return;
+
+    const headers = ["rank", "filename", "score", "skill_score", "tfidf_score", "embedding_score", "matched_skills", "missing_skills"];
+    const scored = lastResults.filter(r => r.error === undefined).sort((a, b) => b.score - a.score);
+
+    let csv = headers.join(",") + "\n";
+    scored.forEach((r, i) => {
+      const matched = (r.matched_skills || []).join(" ");
+      const missing = (r.missing_skills || []).join(" ");
+      csv += [i + 1, r.filename, r.score, r.skill_score, r.tfidf_score, r.embedding_score,
+              `"${matched}"`, `"${missing}"`].join(",") + "\n";
+    });
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "resumerank_results.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+</script>
+</body>
+</html>

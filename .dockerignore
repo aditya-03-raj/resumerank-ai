@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+*.pyc
+.git/
+data/resumes/
+data/extracted/
+requirements-dev.txt

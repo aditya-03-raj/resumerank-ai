@@ -1,0 +1,39 @@
+NLP / AI Intern
+
+About the role
+We are looking for an AI/NLP Intern to work on applications involving text processing, document analysis, and natural language understanding.
+
+Responsibilities
+
+* Preprocess and clean textual datasets
+* Perform tokenization and text normalization
+* Build text classification and similarity models
+* Experiment with TF-IDF, word embeddings, and transformer-based approaches
+* Develop NLP pipelines for extracting useful information from documents
+* Evaluate NLP models using appropriate metrics
+* Conduct experiments and document results
+* Collaborate with engineers to integrate NLP models into applications
+
+Requirements
+
+* Pursuing a degree in Computer Science, Information Technology, AI, or a related field
+* Strong Python programming skills
+* Knowledge of NLP fundamentals
+* Familiarity with NLTK, spaCy, or similar libraries
+* Understanding of TF-IDF and text vectorization
+* Knowledge of Scikit-learn
+* Basic understanding of deep learning
+* Familiarity with RNNs, LSTMs, or Transformers
+* Experience working with Pandas and NumPy
+
+Good to have
+
+* Sentence Transformers
+* BERT or other transformer models
+* Hugging Face Transformers
+* FastAPI
+* Experience building an NLP project
+* Knowledge of semantic similarity or information retrieval
+
+Duration: 3–6 months
+Work mode: Remote/Hybrid

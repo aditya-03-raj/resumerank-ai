@@ -1,0 +1,35 @@
+Machine Learning Intern
+
+About the role
+We are looking for a Machine Learning Intern to assist our team in developing and evaluating machine learning models for real-world business problems.
+
+Responsibilities
+
+* Collect, clean, and preprocess structured datasets
+* Perform exploratory data analysis and feature engineering
+* Train and evaluate supervised and unsupervised machine learning models
+* Experiment with algorithms such as Logistic Regression, Random Forest, XGBoost, and clustering
+* Tune model hyperparameters and compare model performance
+* Prepare technical documentation and communicate findings
+* Assist in deploying ML models through APIs
+
+Requirements
+
+* Pursuing a degree in Computer Science, Information Technology, Data Science, or a related field
+* Good knowledge of Python
+* Familiarity with Pandas, NumPy, and Scikit-learn
+* Understanding of regression, classification, and clustering
+* Basic knowledge of SQL
+* Understanding of model evaluation metrics
+* Familiarity with Git/GitHub
+
+Good to have
+
+* FastAPI or Flask
+* XGBoost
+* Docker
+* Basic knowledge of cloud deployment
+* Experience with an end-to-end ML project
+
+Duration: 3–6 months
+Work mode: Remote/Hybrid

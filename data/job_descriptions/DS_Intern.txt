@@ -1,0 +1,37 @@
+Data Science Intern
+
+About the role
+We are seeking a Data Science Intern who enjoys working with data and extracting meaningful insights to support data-driven decisions.
+
+Responsibilities
+
+* Clean and preprocess large datasets
+* Perform exploratory data analysis
+* Identify trends, patterns, and relationships in data
+* Build statistical and machine learning models
+* Create meaningful visualizations and reports
+* Perform feature engineering and model evaluation
+* Work with structured datasets using Python and SQL
+* Present analytical findings to the team
+
+Requirements
+
+* Pursuing a degree in Computer Science, Data Science, Statistics, Mathematics, or a related field
+* Strong Python fundamentals
+* Experience with Pandas and NumPy
+* Knowledge of Scikit-learn
+* Understanding of statistics and probability
+* Knowledge of SQL
+* Experience with data visualization using Matplotlib, Seaborn, or similar tools
+* Understanding of regression and classification
+
+Good to have
+
+* Power BI or Tableau
+* Experience with XGBoost or ensemble models
+* Knowledge of time-series analysis
+* Experience working on real-world datasets
+* Familiarity with Git
+
+Duration: 3–6 months
+Work mode: Remote
