@@ -6,9 +6,6 @@ ResumeRank AI is a resume screening tool that takes a job description and a batc
 
 Built as a B.Tech Information Technology major project at Haldia Institute of Technology.
 
-<!-- Add a screenshot or GIF of the UI here -->
-<!-- ![ResumeRank AI demo](docs/demo.gif) -->
-
 ---
 
 ## Table of Contents
@@ -79,10 +76,10 @@ Each resume receives three component scores, each between 0 and 1:
 The final score is a weighted combination of the three:
 
 ```
-final_score = w1 * tfidf_score + w2 * embedding_score + w3 * skill_overlap_score
+final_score = 0.2 * tfidf_score + 0.3 * embedding_score + 0.5 * skill_overlap_score
 ```
 
-<!-- Replace with your actual weights, e.g. 0.3 / 0.4 / 0.3 -->
+
 Weights are defined in `scoring.py` and can be tuned.
 
 ---
@@ -105,7 +102,6 @@ Weights are defined in `scoring.py` and can be tuned.
 
 ## Project Structure
 
-<!-- Adjust the files inside app/ to match your actual code -->
 ```
 ResumeRank-AI/
 ├── app/                   # FastAPI backend
@@ -135,8 +131,8 @@ ResumeRank-AI/
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/<your-username>/<your-repo>.git
-cd <your-repo>
+git clone https://github.com/<aditya-03-raj>/<resumerank-ai>.git
+cd <resumerank-ai>
 
 # 2. Create and activate a virtual environment
 python -m venv venv
