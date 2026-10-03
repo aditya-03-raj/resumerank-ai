@@ -282,8 +282,8 @@ These were documented deliberately rather than "fixed" by tuning weights to a si
 **Aditya**
 B.Tech Information Technology, Haldia Institute of Technology (2024-2028)
 
-- GitHub: [@your-username](https://github.com/your-username)
-- LinkedIn: <!-- add link -->
+- GitHub: [@aditya-03-raj](https://github.com/aditya-03-raj)
+- LinkedIn: <!-- [add link](https://www.linkedin.com/in/aditya-03-raj/) -->
 
 ---
 
