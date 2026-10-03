@@ -3,7 +3,7 @@ from typing import List
 import shutil
 import os
 import tempfile
-
+from fastapi.responses import RedirectResponse
 from app.preprocessing import clean_text
 from app.extraction import extract_text
 from app.scoring import combined_score, get_matched_skills
@@ -19,9 +19,13 @@ app.mount("/static",StaticFiles(directory="static"),name="static")
 def serve_frontend():
     return FileResponse("static/index.html")
 
-@app.get("/")
+@app.get("/health")
 def health_check():
     return {"status":"ok", "message":"ResumeRank AI is running"}
+
+@app.get("/")
+def root():
+    return RedirectResponse(url="/app")
 
 @app.post("/rank")
 async def rank_resumes(
