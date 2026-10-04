@@ -47,15 +47,9 @@ def skill_overlap_score(jd_text,resume_text):
     matched = set(jd_skills) & set(resume_skills)
     return len(matched) / len(jd_skills)
 
-def combined_score(jd_raw_text, jd_clean_text, resume_raw_text, resume_clean_text,
-                   skill_weight=0.5, embedding_weight=0.3,tfidf_weight=0.2):
-
-    skill_score = skill_overlap_score(jd_raw_text,resume_raw_text)
-    tfidf_score = score_resumes(jd_clean_text,[resume_clean_text])[0]
-    embedding_score = score_resumes_embeddings(jd_raw_text,[resume_raw_text])[0]
-
-    final = (skill_weight * skill_score) + (embedding_weight * embedding_score) + (tfidf_weight * tfidf_score)
-    return final, skill_score, tfidf_score, embedding_score
+def combine_scores(skill_score, tfidf_score, embedding_score,
+                    skill_weight=0.5, embedding_weight=0.3, tfidf_weight=0.2):
+    return (skill_weight * skill_score) + (embedding_weight * embedding_score) + (tfidf_weight * tfidf_score)
 
 def get_matched_skills(jd_text, resume_text):
     jd_skills = extract_skills(jd_text)
